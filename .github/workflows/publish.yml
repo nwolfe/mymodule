@@ -16,4 +16,6 @@ jobs:
       - name: Build
         run: bundle exec pdk build --force
       - name: Publish
-        run: bundle exec pdk release publish --force --forge-token ${{ secrets.PDK_FORGE_TOKEN }}
+        env:
+          PDK_FORGE_TOKEN: ${{ secrets.PDK_FORGE_TOKEN }}
+        run: bundle exec pdk release publish --force
