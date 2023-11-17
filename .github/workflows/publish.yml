@@ -8,11 +8,12 @@ jobs:
     steps:
       - name: Clone repo
         uses: actions/checkout@v3
+      - name: Install Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '2.7'
+          bundler-cache: true
       - name: Build
-        uses: docker://puppet/pdk:latest
-        with:
-          args: 'build --force'
+        run: bundle exec pdk build --force
       - name: Publish
-        uses: docker://puppet/pdk:latest
-        with:
-          args: 'release publish --force --forge-token ${{ secrets.PDK_FORGE_TOKEN }}'
+        run: bundle exec pdk release publish --force --forge-token ${{ secrets.PDK_FORGE_TOKEN }}
