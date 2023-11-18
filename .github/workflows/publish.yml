@@ -14,10 +14,8 @@ jobs:
           repository: nwolfe/modulerepo
           ref: main
           path: modulerepo
-      - name: Prepare Build
-        run: |
-          echo .git/ > .pdkignore
-          echo .pdkignore >> .pdkignore
+      - name: Ensure Clean Tarball
+        run: echo -e ".git/\n.pdkignore\nmodulerepo" > .pdkignore; cat .pdkignore
       - name: Build Module
         uses: docker://puppet/pdk:latest
         with:
