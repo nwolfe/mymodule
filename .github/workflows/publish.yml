@@ -6,16 +6,29 @@ jobs:
   publish:
     runs-on: ubuntu-latest
     steps:
-      - name: Clone repo
+      - name: Clone mymodule
         uses: actions/checkout@v3
-      - name: Install Ruby
-        uses: ruby/setup-ruby@v1
         with:
-          ruby-version: '2.7'
-          bundler-cache: true
-      - name: Build
-        run: bundle exec pdk build --force
-      - name: Publish
-        env:
-          PDK_FORGE_TOKEN: ${{ secrets.PDK_FORGE_TOKEN }}
-        run: bundle exec pdk release publish --force
+          path: mymodule
+      - name: Clone modulerepo
+        uses: actions/checkout@v3
+        with:
+          repository: nwolfe/modulerepo
+          ref: main
+          path: modulerepo
+      - name: Prepare Build
+        working-directory: ${{ github.workspace }}/mymodule
+        run: |
+          echo .git/ > .pdkignore
+          echo .pdkignore >> .pdkignore
+      - name: Build Module
+        uses: docker://puppet/pdk:latest
+        with:
+          args: 'build --force'
+      - name: List Tarball
+        working-directory: ${{ github.workspace }}/mymodule
+        run: tar -tf pkg/*
+#      - name: Upload To Forge
+#        uses: docker://puppet/pdk:latest
+#        with:
+#          args: 'release publish --force --forge-token ${{ secrets.PDK_FORGE_TOKEN }}'
