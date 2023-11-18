@@ -8,8 +8,6 @@ jobs:
     steps:
       - name: Clone mymodule
         uses: actions/checkout@v3
-        with:
-          path: mymodule
       - name: Clone modulerepo
         uses: actions/checkout@v3
         with:
@@ -17,7 +15,6 @@ jobs:
           ref: main
           path: modulerepo
       - name: Prepare Build
-        working-directory: ${{ github.workspace }}/mymodule
         run: |
           echo .git/ > .pdkignore
           echo .pdkignore >> .pdkignore
@@ -26,7 +23,6 @@ jobs:
         with:
           args: 'build --force'
       - name: List Tarball
-        working-directory: ${{ github.workspace }}/mymodule
         run: tar -tf pkg/*
 #      - name: Upload To Forge
 #        uses: docker://puppet/pdk:latest
