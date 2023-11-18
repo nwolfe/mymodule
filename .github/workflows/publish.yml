@@ -5,23 +5,35 @@ on:
 jobs:
   publish:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: mymodule
     steps:
       - name: Clone mymodule
         uses: actions/checkout@v3
+        with:
+          path: mymodule
       - name: Clone modulerepo
         uses: actions/checkout@v3
         with:
           repository: nwolfe/modulerepo
           ref: main
           path: module-repo
-      - name: Ensure Clean Tarball
-        run: echo -e ".git\n.pdkignore\nmodule-repo" > .pdkignore; cat .pdkignore
-      - name: Build Module
-        uses: docker://puppet/pdk:latest
+      - name: Install Ruby
+        uses: ruby/setup-ruby@v1
         with:
-          args: 'build --force'
+          ruby-version: 3
+      - name: Install PDK
+        run: gem install pdk
+      - name: Ensure Clean Tarball
+        run: echo -e ".git\n.pdkignore" > .pdkignore; cat .pdkignore
+      - name: Build Module
+        run: pdk build --force
       - name: List Tarball
         run: tar -tf pkg/*
+#      - name: Upload To Forge
+#        working-directory: mymodule
+#        run: pdk release publish --force --forge-token ${{ secrets.PDK_FORGE_TOKEN }}
 #      - name: Upload To Forge
 #        uses: docker://puppet/pdk:latest
 #        with:
