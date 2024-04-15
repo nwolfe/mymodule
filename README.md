@@ -1,1 +1,1 @@
-mymodule for testing
+foo
